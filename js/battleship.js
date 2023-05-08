@@ -17,8 +17,11 @@ class Ship {
       case 'carrier':
         this.printSymbol = 'C'
         break;
+      case 'submarine':
+        this.printSymbol = 'S'
+        break;
       default:
-       this.printSymbol = 'x';
+        this.printSymbol = 'x';
     }
     this.x1 = x1;
     this.x2 = x2;
@@ -148,20 +151,32 @@ function getRandomNumber(min, max) {
 }
 // createShip creates a new ship
 function createShip(shipType, shipSize, boardSize) {
-  let startX = getRandomNumber(1, boardSize - shipSize + 1)
-  let startY = getRandomNumber(1, boardSize - shipSize);
-  return new Ship(shipType, startX, startY, startX + shipSize - 1, startY);
+  let horizontal = Math.random() > 0.5;
+  var startX, startY;
+  if (horizontal) {
+    startX = getRandomNumber(1, boardSize - shipSize + 1)
+    startY = getRandomNumber(1, boardSize);
+    return new Ship(shipType, startX, startY, startX + shipSize - 1, startY);
+  } else {
+    startX = getRandomNumber(1, boardSize);
+    startY = getRandomNumber(1, boardSize - shipSize + 1);
+    return new Ship(shipType, startX, startY, startX, startY + shipSize - 1);
+  }
 }
 // placeShips creates a new ship in an arbitrary place on the board
 // that does not conflict with another ship and is within the board size.
 function placeShips(shipType, shipSize, placedShips = [], boardSize = 8) {
   var newShipOverlaps = true;
   var newShip;
-  while (newShipOverlaps) {
+  var tries = 0;
+  while (newShipOverlaps && (tries++ < 10)) {
     newShip = createShip(shipType, shipSize, boardSize);
-    //console.log("New ship: " + toString(newShip));
+    console.log("Trying to place ship: " + newShip.toString());
     newShipOverlaps = shipsOverlap(newShip, placedShips);
-    //console.log ("New ship overlaps? " + newShipOverlaps);
+  }
+  if (newShipOverlaps) {
+    console.log("Couldn't place ship: " + newShip.toString());
+    return null;
   }
   assert(!shipsOverlap(newShip, placedShips), 'Expected new ship does not overlap existing ships')
   return newShip;
@@ -193,14 +208,18 @@ function runQ3Tests() {
 }
 
 var shipGrid;
+const BOARDSIZE = 8;
 function createAndPlaceShips() {
   var currentShips = [];
-  currentShips.push(placeShips('battleship', 4, currentShips, 8));
-  currentShips.push(placeShips('pt', 2, currentShips, 8));
-  currentShips.push(placeShips('cruiser', 3, currentShips, 8));
-  currentShips.push(placeShips('carrier', 5, currentShips, 8));
+  // No error detection when you can't place more ships
+  currentShips.push(placeShips('battleship', 4, currentShips, BOARDSIZE));
+  currentShips.push(placeShips('pt', 2, currentShips, BOARDSIZE));
+  currentShips.push(placeShips('cruiser', 3, currentShips, BOARDSIZE));
+  currentShips.push(placeShips('carrier', 5, currentShips, BOARDSIZE));
+  currentShips.push(placeShips('submarine', 3, currentShips, BOARDSIZE));
 
-  shipGrid = Array(8).fill(0).map(() => Array(8).fill(0));
+
+  shipGrid = Array(BOARDSIZE).fill(0).map(() => Array(BOARDSIZE).fill(0));
 
   for (const ship of currentShips) {
     for (let row = ship.y1; row <= ship.y2; ++row) {
@@ -209,15 +228,13 @@ function createAndPlaceShips() {
       }
     }
   }
- // console.log(shipGrid);
+  // console.log(shipGrid);
 }
 function showShips() {
-  console.log(shipGrid);
   var shipTableHTML = "<table>";
   for (let row = 0; row < shipGrid.length; row++) {
     shipTableHTML += "<tr>"
     for (let col = 0; col < shipGrid[row].length; col++) {
-      console.log(shipGrid[row][col]);
       shipTableHTML += "<td>" + shipGrid[row][col] + "</td>";
     }
     shipTableHTML += "</tr>"
@@ -232,8 +249,8 @@ function showShips() {
 }
 
 function run() {
-  runQ1Tests();
-  runQ3Tests();
+  //runQ1Tests();
+  //runQ3Tests();
   createAndPlaceShips();
   showShips();
 }
