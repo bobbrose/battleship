@@ -1,5 +1,6 @@
 // Battleship explorations and practice
 
+// Ship class that defines it's own print symbol based on shipType.
 class Ship {
   constructor(shipType, x1, y1, x2, y2) {
     this.shipType = shipType;
