@@ -1,4 +1,5 @@
 // Battleship explorations and practice.
+const BOARDSIZE = 8;
 
 // Ship class that defines it's own print symbol based on shipType.
 class Ship {
@@ -171,9 +172,8 @@ function runAdvancedTests() {
   assert(occupied === 5 + 3 + 4, 'Expected number of occupied spaces to equal sum of ship sizes');
 }
 
-var shipGrid;
-const BOARDSIZE = 8;
-function createAndPlaceShips() {
+// Create some ships and place them in the shipGrid
+function createAndPlaceShips(shipGrid) {
   var currentShips = [];
   // No error detection when you can't place more ships
   currentShips.push(placeShips('battleship', 4, currentShips, BOARDSIZE));
@@ -181,9 +181,6 @@ function createAndPlaceShips() {
   currentShips.push(placeShips('cruiser', 3, currentShips, BOARDSIZE));
   currentShips.push(placeShips('carrier', 5, currentShips, BOARDSIZE));
   currentShips.push(placeShips('submarine', 3, currentShips, BOARDSIZE));
-
-
-  shipGrid = Array(BOARDSIZE).fill(0).map(() => Array(BOARDSIZE).fill(0));
 
   for (const ship of currentShips) {
     for (let row = ship.y1; row <= ship.y2; ++row) {
@@ -194,8 +191,8 @@ function createAndPlaceShips() {
   }
 }
 
-
-function showShips() {
+// Show the ships in an HTML table
+function showShips(shipGrid) {
   var shipTableHTML = "<table>";
   for (let row = 0; row < shipGrid.length; row++) {
     shipTableHTML += "<tr>"
@@ -210,7 +207,6 @@ function showShips() {
   if (infoArea != null) {
     infoArea.innerHTML = shipTableHTML;
   }
-
 }
 
 function runTests() {
@@ -218,9 +214,11 @@ function runTests() {
   runAdvancedTests();
 }
 
+// Run some unit test, create some ships, and show them on an HTML board
 function run() {
   runTests();
-  createAndPlaceShips();
-  showShips();
+  var shipGrid = Array(BOARDSIZE).fill(0).map(() => Array(BOARDSIZE).fill(0));
+  createAndPlaceShips(shipGrid);
+  showShips(shipGrid);
 }
 run();
