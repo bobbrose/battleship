@@ -1,4 +1,4 @@
-// Battleship explorations and practice
+// Battleship explorations and practice.
 
 // Ship class that defines it's own print symbol based on shipType.
 class Ship {
@@ -32,17 +32,14 @@ class Ship {
     return "Ship: " + this.shipType + "(" + this.x1 + ", " + this.y1 + ") - (" + this.x2 + ", " + this.y2 + ")";
   }
 }
-// --------------------------------------------------------
-// Q1: Check if ship overlaps existing
-// --------------------------------------------------------
 
+// Return true if a target is within 2 points
 function inRange(target, p1, p2) {
   return ((target >= p1) && (target <= p2));
 }
 
-// Helper method to see if two lines overlap
+// Return true if the range of Point1 overlaps the range of Point2
 function rangeOverlaps(range1p1, range1p2, range2p1, range2p2) {
-  //console.log(range1p1 + " " + range1p2 + " " + range2p1 + " " +range2p2);
   if (inRange(range1p1, range2p1, range2p2) ||
     inRange(range1p2, range2p1, range2p2)) {
     return true;
@@ -50,7 +47,8 @@ function rangeOverlaps(range1p1, range1p2, range2p1, range2p2) {
   return (inRange(range2p1, range1p1, range1p2) ||
     inRange(range2p2, range1p1, range1p2));
 }
-// Method to check if two ships overlap
+
+// Return true if two ships overlap
 function shipOverlap(ship1, ship2) {
   console.log("Compare " + ship1.toString() + " with: " + ship2.toString());
   // Check horizontal range
@@ -67,16 +65,8 @@ function shipOverlap(ship1, ship2) {
   return true;
 }
 
-
+// Retrun true if the given ship overlaps any of the existing ships
 function shipsOverlap(ship, existing) {
-  /* Hints:
-      Range A overlaps range B if B starts
-      before A ends, and B ends after A
-      starts. 2-D rectangles overlap if
-      their horizontal and vertical
-      ranges both overlap
-       An alternative way is to see if they
-      have any squares in common. */
   for (let existingShip of existing) {
     if (shipOverlap(ship, existingShip)) {
       return true;
@@ -85,20 +75,13 @@ function shipsOverlap(ship, existing) {
   return false;
 }
 
-
-// Return a string showing the ship information for debugging.
-function toString(ship) {
-  return ship.type + "(" + ship.x1 + ", " + ship.y1 + ") - (" + ship.x2 + ", " + ship.y2 + ")";
-}
-
-
 function assert(isTrue, message) {
   if (!isTrue) console.error('ERROR:', message);
   else console.info('PASS:', message);
 }
 
-
-function runQ1Tests() {
+// Test basic building and placing functionality
+function runInitialTests() {
   const s1 = new Ship('battleship', 8, 3, 8, 6);
   const s2 = new Ship('carrier', 2, 2, 6, 2);
   const s3 = new Ship('cruiser', 6, 4, 8, 4);
@@ -123,33 +106,13 @@ function runQ1Tests() {
   assert(shipsOverlap(s4, [s5]), 'Expected s4 overlaps [s5]')
 }
 
-
-/*
------------------------------------------------------------
-Q2
------------------------------------------------------------
-* - Which of the two algorithms is faster in the worst case?
-* In the worst case, the first algorithm is faster as it runs in constant
-* time, it's just checking ranges. 
-* - Which of the two algorithms is faster on average?
-* The first
-* - Similarly, can you compare the memory usage of the two algorithms?
-* The 2nd algorithm will use more memory as it has to compare every point
-* to every point to see if there are any common points.
-*/
-
-// --------------------------------------------------------
-// Q3
-// --------------------------------------------------------
-
-
-/**
- * Returns a random number between min (inclusive) and max (exclusive)
- */
+// Returns a random number between min (inclusive) and max (exclusive)
 function getRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-// createShip creates a new ship
+
+// createShip creates a new ship at randome place on the board,
+// randomly horizontal or vertical
 function createShip(shipType, shipSize, boardSize) {
   let horizontal = Math.random() > 0.5;
   var startX, startY;
@@ -163,6 +126,7 @@ function createShip(shipType, shipSize, boardSize) {
     return new Ship(shipType, startX, startY, startX, startY + shipSize - 1);
   }
 }
+
 // placeShips creates a new ship in an arbitrary place on the board
 // that does not conflict with another ship and is within the board size.
 function placeShips(shipType, shipSize, placedShips = [], boardSize = 8) {
@@ -182,7 +146,7 @@ function placeShips(shipType, shipSize, placedShips = [], boardSize = 8) {
   return newShip;
 }
 
-function runQ3Tests() {
+function runAdvancedTests() {
   const s1 = new Ship('carrier', 2, 2, 6, 2);
   const s2 = new Ship('cruiser', 6, 4, 8, 4);
 
@@ -228,8 +192,9 @@ function createAndPlaceShips() {
       }
     }
   }
-  // console.log(shipGrid);
 }
+
+
 function showShips() {
   var shipTableHTML = "<table>";
   for (let row = 0; row < shipGrid.length; row++) {
@@ -248,9 +213,13 @@ function showShips() {
 
 }
 
+function runTests() {
+  runInitialTests();
+  runAdvancedTests();
+}
+
 function run() {
-  //runQ1Tests();
-  //runQ3Tests();
+  runTests();
   createAndPlaceShips();
   showShips();
 }
